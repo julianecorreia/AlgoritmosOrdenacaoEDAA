@@ -31,13 +31,10 @@ public class Main {
     private static final int ONE_MILLION_FIVE_HUNDRED_THOUSAND = 1500000;
     private static final int TWO_MILLION = 2000000;
 
-//    private static int[] sizes = {ONE_HUNDRED, TWO_HUNDRED, FIVE_HUNDRED, ONE_THOUSAND, TWO_THOUSAND, FIVE_THOUSAND,
-//            SEVEN_HALF_THOUSAND, TEN_THOUSAND, FIFTEEN_THOUSAND, THIRTY_THOUSAND, FIFTY_THOUSAND, SEVENTY_FIVE_THOUSAND,
-//            ONE_HUNDRED_THOUSAND, TWO_HUNDRED_THOUSAND, FIVE_HUNDRED_THOUSAND, SEVEN_HUNDRED_FIFTY_THOUSAND, ONE_MILLION,
-//            ONE_MILLION_TWO_HUNDRED_FIFTY_THOUSAND, ONE_MILLION_FIVE_HUNDRED_THOUSAND, TWO_MILLION};
-
     private static int[] sizes = {ONE_HUNDRED, TWO_HUNDRED, FIVE_HUNDRED, ONE_THOUSAND, TWO_THOUSAND, FIVE_THOUSAND,
-            SEVEN_HALF_THOUSAND, TEN_THOUSAND};
+            SEVEN_HALF_THOUSAND, TEN_THOUSAND, FIFTEEN_THOUSAND, THIRTY_THOUSAND, FIFTY_THOUSAND, SEVENTY_FIVE_THOUSAND,
+            ONE_HUNDRED_THOUSAND, TWO_HUNDRED_THOUSAND, FIVE_HUNDRED_THOUSAND, SEVEN_HUNDRED_FIFTY_THOUSAND, ONE_MILLION,
+            ONE_MILLION_TWO_HUNDRED_FIFTY_THOUSAND, ONE_MILLION_FIVE_HUNDRED_THOUSAND, TWO_MILLION};
 
     private static DataType[] dataTypes = {DataType.RAND, DataType.DESC, DataType.SORT, DataType.HALF_SORT};
     private static SortType[] sortTypes = {SortType.QUICK, SortType.MERGE, SortType.HEAP};
@@ -57,8 +54,8 @@ public class Main {
                 for (int i = 0; i < 7; i++) {
                     System.out.println(STR."Lap: \{i + 1}");
 
-                    quickSortTest(size, SortType.QUICK.getName(), dataType);
-                    mergeSortTest(size, SortType.MERGE.getName(), dataType);
+//                    quickSortTest(size, SortType.QUICK.getName(), dataType);
+//                    mergeSortTest(size, SortType.MERGE.getName(), dataType);
                     heapSortTest(size, SortType.HEAP.getName(), dataType);
                 }
             }
@@ -77,9 +74,9 @@ public class Main {
         //preenche o array com os valores do arquivo
         fillArrayFromFile(array, STR."C:/SortEDAA/\{dataType.getFolder()}\{size}.txt");
 
-//        for (int element : array) {
-//            System.out.print(STR."\{element}, ");
-//        }
+        for (int element : array) {
+            System.out.print(STR."\{element}, ");
+        }
 
         long startTime = System.nanoTime();
 
@@ -247,6 +244,13 @@ public class Main {
 
         return comparisons;
     }
+
+    /**
+     * Este método executa o algoritmo QuickSort em um array de inteiros.
+     * @param size Tamanho do array.
+     * @param sortType Tipo de ordenação.
+     * @param dataType Tipo de dado.
+     */
     private static void quickSortTest(int size, String sortType, DataType dataType) {
         //cria um array de tamanho size
         int[] array = new int[size];
@@ -261,7 +265,7 @@ public class Main {
         //começa a contar o tempo
         long startTime = System.nanoTime();
 
-        int result = quickSort(array, 0, array.length - 1);
+        int result = quickSort(array);
 
         printExecutionTime(startTime, result, sortType, size, dataType.getName());
 
@@ -270,32 +274,33 @@ public class Main {
 //        }
     }
 
-    private static int quickSort(int[] array, int low, int high) {
+    private static int quickSort(int[] array) {
         int comparisons = 0;
-        int[] stack = new int[high - low + 1];
-        int top = -1;
+        int[] stack = new int[array.length * 2];
 
-        stack[++top] = low;
-        stack[++top] = high;
+        int top = -1;
+        stack[++top] = 0;
+        stack[++top] = array.length - 1;
 
         while (top >= 0) {
-            high = stack[top--];
-            low = stack[top--];
+            int high = stack[top--];
+            int low = stack[top--];
 
             int[] partitionResult = partition(array, low, high);
-            int pivotIndex = partitionResult[0];
+            int pivot = partitionResult[0];
             comparisons += partitionResult[1];
 
-            if (pivotIndex - 1 > low) {
+            if (pivot - 1 > low) {
                 stack[++top] = low;
-                stack[++top] = pivotIndex - 1;
+                stack[++top] = pivot - 1;
             }
 
-            if (pivotIndex + 1 < high) {
-                stack[++top] = pivotIndex + 1;
+            if (pivot + 1 < high) {
+                stack[++top] = pivot + 1;
                 stack[++top] = high;
             }
         }
+
         return comparisons;
     }
 
@@ -306,13 +311,20 @@ public class Main {
 
         for (int j = low; j < high; j++) {
             if (array[j] <= pivot) {
-                comparisons++;
                 i++;
+
+                if (i != j) {
+                    comparisons++;
+                }
 
                 int temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
             }
+        }
+
+        if (i + 1 != high) {
+            comparisons++;
         }
 
         int temp = array[i + 1];
