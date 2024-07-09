@@ -54,8 +54,8 @@ public class Main {
                 for (int i = 0; i < 7; i++) {
                     System.out.println(STR."Lap: \{i + 1}");
 
-//                    quickSortTest(size, SortType.QUICK.getName(), dataType);
-//                    mergeSortTest(size, SortType.MERGE.getName(), dataType);
+                    quickSortTest(size, SortType.QUICK.getName(), dataType);
+                    mergeSortTest(size, SortType.MERGE.getName(), dataType);
                     heapSortTest(size, SortType.HEAP.getName(), dataType);
                 }
             }
